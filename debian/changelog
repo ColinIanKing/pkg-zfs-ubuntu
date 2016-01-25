@@ -1,3 +1,19 @@
+zfs-linux (0.6.4.2-0ubuntu1.2) wily; urgency=medium
+
+  [ Colin Ian King ]
+  * Add Linux 4.2 compat: add vfs_rename fix patch (LP: #1521952)
+   - Add dependency on dh-systemd for zfs-linux
+   - Add installinit rules for zed, zfs, mounting and import cache/scan
+   - Copy zfs.target to /lib/systemd/system
+   - Add bash completion rules
+   - Add zed systemd service control
+   - Add zfs shared systemd service control
+   - Add zfs mount systemd service control
+   - Add zfs import scan systemd service control
+   - Add zfs import cache systemd service control
+
+ -- Colin Ian King <colin.king@canonical.com>  Tue, 8 Dec 2015 14:50:00 +0000
+
 zfs-linux (0.6.4.2-0ubuntu1.1) wily; urgency=medium
 
   * Fix FTBFSs on ppc64el and arm64 (LP: #1513124):

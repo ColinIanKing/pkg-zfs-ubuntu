@@ -4,5 +4,6 @@
 0004-Linux-4.2-compat-bdi_setup_and_register.patch
 0005-Linux-4.2-compat-remove-bio-bi_cnt-access.patch
 0006-Linux-4.2-compat-follow_link-put_link.patch
+0007-Linux-4.2-compat-vfs_rename.patch
 1000-ppc64el-endian-support.patch
 1001-shift-param.h-include-order-to-avoid-header-loop-on-arm64.patch

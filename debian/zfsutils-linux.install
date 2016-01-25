@@ -1,4 +1,6 @@
 ../tree/zfsutils-linux/* /
+contrib/bash_completion.d/zfs   /etc/bash_completion.d/
 sbin
 lib/udev
 usr/share/man
+debian/zfs.target /lib/systemd/system
