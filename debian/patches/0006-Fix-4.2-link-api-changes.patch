@@ -1,0 +1,59 @@
+Index: zfs-linux-0.6.4.2/module/zfs/zpl_inode.c
+===================================================================
+--- zfs-linux-0.6.4.2.orig/module/zfs/zpl_inode.c
++++ zfs-linux-0.6.4.2/module/zfs/zpl_inode.c
+@@ -330,8 +330,8 @@ zpl_symlink(struct inode *dir, struct de
+ 	return (error);
+ }
+ 
+-static void *
+-zpl_follow_link(struct dentry *dentry, struct nameidata *nd)
++static const char *
++zpl_follow_link(struct dentry *dentry, void **cookie)
+ {
+ 	cred_t *cr = CRED();
+ 	struct inode *ip = dentry->d_inode;
+@@ -339,7 +339,7 @@ zpl_follow_link(struct dentry *dentry, s
+ 	uio_t uio;
+ 	char *link;
+ 	int error;
+-	fstrans_cookie_t cookie;
++	fstrans_cookie_t fstrans_cookie;
+ 
+ 	crhold(cr);
+ 
+@@ -351,27 +351,24 @@ zpl_follow_link(struct dentry *dentry, s
+ 	uio.uio_resid = (MAXPATHLEN - 1);
+ 	uio.uio_segflg = UIO_SYSSPACE;
+ 
+-	cookie = spl_fstrans_mark();
++	fstrans_cookie = spl_fstrans_mark();
+ 	error = -zfs_readlink(ip, &uio, cr);
+-	spl_fstrans_unmark(cookie);
++	spl_fstrans_unmark(fstrans_cookie);
+ 	if (error) {
+ 		kmem_free(link, MAXPATHLEN);
+-		nd_set_link(nd, ERR_PTR(error));
++		*cookie = NULL;
+ 	} else {
+-		nd_set_link(nd, link);
++		*cookie = link;
+ 	}
+ 
+ 	crfree(cr);
+-	return (NULL);
++	return (*cookie);
+ }
+ 
+ static void
+-zpl_put_link(struct dentry *dentry, struct nameidata *nd, void *ptr)
++zpl_put_link(struct inode *inode, void *cookie)
+ {
+-	const char *link = nd_get_link(nd);
+-
+-	if (!IS_ERR(link))
+-		kmem_free(link, MAXPATHLEN);
++	kmem_free(cookie, MAXPATHLEN);
+ }
+ 
+ static int

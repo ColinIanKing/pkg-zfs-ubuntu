@@ -1,4 +1,29 @@
-zfs-linux (0.6.4.2-1~vivid) vivid; urgency=low
+zfs-linux (0.6.4.2-0ubuntu1) wily; urgency=medium
+
+  [ Colin Ian King ]
+  * Linux 4.2 compat: bdi_setup_and_register()
+  * Linux 4.2 compat: remove bio->bi_cnt access
+  * Linux 4.2 compat: follow_link() / put_link()
+  * update debian/gbp.conf from vivid to wily
+  * update Standards-Version to 3.9.6
+  * fix dep5-copyright-license-name-not-unique warning
+  * prepared for Ubuntu Wily upload
+
+  [ Iain Lane ]
+  * Drop the upstart integration; this was causing various lintian errors and
+    required some fixing up - we use systemd in wily anyway.
+  * Copy the debian/copyright file as it is slightly more correct.
+  * Install the bash-completion files in the (new) correct directory.
+  * Don't handle upgrades from non-archive packages.
+  * Add Depends from the -dev package to all libraries which we ship .so files
+    for.
+  * Don't ship .la files.
+  * Make some packages Architecture: all where they don't ship architecture
+    dependent files.
+
+ -- Colin Ian King <colin.king@canonical.com>  Wed, 14 Oct 2015 15:46:29 +0100
+
+zfs-linux (0.6.4.2-0~vivid) vivid; urgency=low
 
   [ Brian Behlendorf ]
   * Wait in libzfs_init() for the /dev/zfs device

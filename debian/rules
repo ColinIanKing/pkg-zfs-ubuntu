@@ -64,7 +64,7 @@ override_dh_fixperms:
 	dh_fixperms
 
 	@# Prevent execute bits from being stripped by the Launchpad pbuilder.
-	$(CHMOD) a+x '$(CURDIR)'/debian/zfsutils/usr/share/initramfs-tools/hooks/*
+	$(CHMOD) a+x '$(CURDIR)'/debian/zfsutils-linux/usr/share/initramfs-tools/hooks/*
 	$(CHMOD) a+x '$(CURDIR)'/debian/zfs-initramfs/usr/share/initramfs-tools/hooks/*
 
 override_dh_install:
@@ -73,32 +73,26 @@ override_dh_install:
 
 	@# Ensure that /etc/zfs is in the zfsutils package
 	@# because git has difficulty tracking empty directories.
-	$(INSTALL) -d '$(CURDIR)/debian/zfsutils/etc/zfs/'
+	$(INSTALL) -d '$(CURDIR)/debian/zfsutils-linux/etc/zfs/'
 
 	@# Resolve lintian errors regarding Debian Policy Manual Section 8.4
 	@# by moving unversioned library links from /lib to /usr/lib in the
 	@# development package. Look at libc6-dev for a packaging example if
 	@# multiarch support ever becomes a concern here.
-	$(INSTALL) -d '$(CURDIR)/debian/libzfs-dev/usr/lib/'
-	cd '$(CURDIR)/debian/libzfs-dev/lib' && \
+	$(INSTALL) -d '$(CURDIR)/debian/libzfslinux-dev/usr/lib/'
+	cd '$(CURDIR)/debian/libzfslinux-dev/lib' && \
 	for ii in $$(find -type l); do \
 	  ln -s "../../lib/$$(readlink "$$ii")" "../usr/lib/$$(basename "$$ii")" \
 	  && rm "$$ii"; \
 	done
 
+	# No need to ship .la files
+	find . -name lib*.la -delete
+
 override_dh_installdocs:
 	dh_installdocs --link-doc=zfs-doc
 
 override_dh_installinit:
-	@# Install debian/zfs-zed.zed.upstart as /etc/init/zed.conf.
-	dh_installinit --name=zed
-
-	@# Install debian/zfsutils.zfs.default as /etc/default/zfs.
-	dh_installinit --name=zfs
-
-	@# Install debian/zfsutils.zpool-import.upstart as /etc/init/zpool-import.conf.
-	dh_installinit --name=zpool-import --no-restart-on-upgrade --no-start
-
 	@# Ubuntu runs nfs-kernel-server at sysv sequence 20 80 and iscsitarget at 20 20.
 	dh_installinit --name=zfs-share --no-restart-on-upgrade --no-start -- defaults 25 15
 
@@ -107,9 +101,9 @@ override_dh_installudev:
 	dh_installudev --name=vdev --priority=69
 
 override_dh_strip:
-	dh_strip -plibnvpair1 --dbg-package=libnvpair1-dbg
-	dh_strip -plibuutil1 --dbg-package=libuutil1-dbg
-	dh_strip -plibzfs2 --dbg-package=libzfs2-dbg
-	dh_strip -plibzpool2 --dbg-package=libzpool2-dbg
+	dh_strip -plibnvpair1linux --dbg-package=libnvpair1linux-dbg
+	dh_strip -plibuutil1linux --dbg-package=libuutil1linux-dbg
+	dh_strip -plibzfs2linux --dbg-package=libzfs2linux-dbg
+	dh_strip -plibzpool2linux --dbg-package=libzpool2linux-dbg
 	dh_strip -pzfs-zed --dbg-package=zfs-zed-dbg
-	dh_strip -pzfsutils --dbg-package=zfsutils-dbg
+	dh_strip -pzfsutils-linux --dbg-package=zfsutils-linux-dbg

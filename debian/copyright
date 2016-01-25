@@ -1,8 +1,8 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Native OpenZFS for Linux
+Upstream-Name: Native ZFS for Linux
 Upstream-Contact: Brian Behlendorf <behlendorf1@llnl.gov>
 Source: https://github.com/zfsonlinux/zfs/
-Comment:
+Disclaimer:
  This work was produced at the Lawrence Livermore National Laboratory
  (LLNL) under Contract No. DE-AC52-07NA27344 (Contract 44) between
  the U.S. Department of Energy (DOE) and Lawrence Livermore National
@@ -111,15 +111,14 @@ Files: cmd/zvol_id/*
 Copyright: Fajar A. Nugraha.
 License: CDDL-1.0
 
-Files: debian/*
-Copyright: Darik Horn <dajhorn@vanadac.com>
+Files: config/config.guess config/config.sub config/depcomp config/ltmain.sh config/missing
+Copyright: Free Software Foundation, Inc.
 License: GPL-2+
-Comment:
- On Debian systems, the full text of the GNU General Public License
- version 2 can be found in the file `/usr/share/common-licenses/GPL-2'.
- .
- The source for the debian packaging can be found at:
- https://github.com/zfsonlinux/pkg-zfs/
+
+Files: debian/*
+Copyright:
+ Darik Horn <dajhorn@vanadac.com>
+License: GPL-2+
 
 Files: debian/tree/zfsutils/etc/bash_completion.d/zfs
 Copyright: 2013, Aneurin Price <aneurin.price@gmail.com>
@@ -128,6 +127,9 @@ License: Expat
 Files: etc/init.d/zfs.gentoo.in
 Copyright: Gentoo Foundation
 License: BSD-2-clause
+ Copyright (c) 2011, Gentoo Foundation
+ All rights reserved.
+ .
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  .
@@ -383,6 +385,10 @@ License: CDDL-1.0
 
 Files: include/sys/unique.h
 Copyright: Sun Microsystems, Inc.
+ Hewlett-Packard Company
+ Open Software Foundation, Inc.
+ Digital Equipment Corporation.
+ Microsoft
 License: CDDL-1.0
 
 Files: include/sys/vdev_file.h
@@ -402,6 +408,10 @@ Files: include/sys/xvattr.h
 Copyright: AT&T
  Oracle
  The Regents of the University of California
+License: CDDL-1.0
+
+Files: include/sys/vdev_impl.h
+Copyright: Oracle
 License: CDDL-1.0
 
 Files: include/sys/zap.h
@@ -601,12 +611,6 @@ License: CDDL-1.0
 
 Files: lib/libspl/include/*
 Copyright: Sun Microsystems, Inc.
-License: CDDL-1.0
-
-Files: lib/libspl/include/byteorder.h
-Copyright: Sun Microsystems, Inc.
- AT&T
- The Regents of the University of California
 License: CDDL-1.0
 
 Files: lib/libspl/include/sys/dktp/fdisk.h
@@ -997,32 +1001,6 @@ Files: module/zfs/lzjb.c
 Copyright: Oracle
 License: CDDL-1.0
 
-Files: module/zfs/lz4.c
-Copyright: 2011-2013, Yann Collet
-License: BSD-2-Clause
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are
- met:
- .
- * Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above
-   copyright notice, this list of conditions and the following disclaimer
-   in the documentation and/or other materials provided with the
-   distribution.
- .
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 Files: module/zfs/metaslab.c
 Copyright: Oracle
  Delphix
@@ -1277,7 +1255,8 @@ License: Expat
  .
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT.
  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
@@ -1613,17 +1592,3 @@ License: CDDL-1.0
  of rights under this License and You agree to work with Initial Developer and
  Contributors to distribute such responsibility on an equitable basis. Nothing
  herein is intended or shall be deemed to constitute any admission of liability.
- .
- --------------------------------------------------------------------
- .
- NOTICE PURSUANT TO SECTION 9 OF THE COMMON DEVELOPMENT AND
- DISTRIBUTION LICENSE (CDDL)
- .
- For Covered Software in this distribution, this License shall
- be governed by the laws of the State of California (excluding
- conflict-of-law provisions).
- .
- Any litigation relating to this License shall be subject to the
- jurisdiction of the Federal Courts of the Northern District of
- California and the state courts of the State of California, with
- venue lying in Santa Clara County, California.
