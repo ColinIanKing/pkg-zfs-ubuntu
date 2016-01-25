@@ -1,3 +1,9 @@
+zfs-linux (0.6.5.3-0ubuntu5) xenial; urgency=medium
+
+  * Add adt smoke tests checking basic core ZFS functionality
+
+ -- Colin Ian King <colin.king@canonical.com>  Mon, 11 Jan 2016 16:25:00 +0000
+
 zfs-linux (0.6.5.3-0ubuntu4) xenial; urgency=medium
 
   * Add dependency on dh-systemd for zfs-linux (LP: #1521952)
