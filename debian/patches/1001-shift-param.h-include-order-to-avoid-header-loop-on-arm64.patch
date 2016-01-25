@@ -1,0 +1,24 @@
+Description: shift param.h include order to avoid header loop on arm64
+ sys/types.h includes sys/param.h to get the NBBY, however on some architectures
+ this triggers an early include of sys/time.h which triggers a wrapper ordering
+ issue wherein we attempt to use the hrtime_t et al before they are defined.  Drop
+ sys/param.h to the bottom to untwist this.
+Author: Andy Whitcroft <apw@ubuntu.com>
+
+--- zfs-linux-0.6.4.2.orig/lib/libspl/include/sys/types.h
++++ zfs-linux-0.6.4.2/lib/libspl/include/sys/types.h
+@@ -30,7 +30,6 @@
+ #include <sys/isa_defs.h>
+ #include <sys/feature_tests.h>
+ #include_next <sys/types.h>
+-#include <sys/param.h> /* for NBBY */
+ #include <sys/types32.h>
+ #include <sys/va_list.h>
+ 
+@@ -96,4 +95,6 @@ typedef union {
+ } lloff_t;
+ #endif
+ 
++#include <sys/param.h> /* for NBBY */
++
+ #endif

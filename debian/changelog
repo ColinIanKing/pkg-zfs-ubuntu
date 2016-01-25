@@ -1,3 +1,15 @@
+zfs-linux (0.6.4.2-0ubuntu1.1) wily; urgency=medium
+
+  * Fix FTBFSs on ppc64el and arm64 (LP: #1513124):
+   - ppc64el: drop endian override in powerpc architecture definition
+     allowing both big and little endian builds.
+   - zfs-initramfs -- this is only build on the indep architecture so only
+     attempt to chmod the hook files if they are present.
+   - arm64: reorder sys/types.h sys/param.h includes to avoid include ordering
+     issues on arm64.
+
+ -- Andy Whitcroft <apw@ubuntu.com>  Fri, 16 Oct 2015 13:57:18 +0100
+
 zfs-linux (0.6.4.2-0ubuntu1) wily; urgency=medium
 
   [ Colin Ian King ]

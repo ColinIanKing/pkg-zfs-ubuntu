@@ -1,0 +1,23 @@
+Description: ppc64el endian support
+ The powerpc architecture detection assumes that the architecture is
+ exclusivly big endian and forces _BIG_ENDIAN on if not set.  When building
+ on ppc64el we are building for powerpc but in little endian mode.
+ Switch to checking that either _BIG_ENDIAN or _LITTLE_ENDIAN is set and
+ error if not.
+Author: Andy Whitcroft <apw@ubuntu.com>
+
+Index: zfs-linux-0.6.4.2/lib/libspl/include/sys/isa_defs.h
+===================================================================
+--- zfs-linux-0.6.4.2.orig/lib/libspl/include/sys/isa_defs.h
++++ zfs-linux-0.6.4.2/lib/libspl/include/sys/isa_defs.h
+@@ -96,8 +96,8 @@ extern "C" {
+ #endif
+ #endif
+ 
+-#if !defined(_BIG_ENDIAN)
+-#define	_BIG_ENDIAN
++#if !defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)
++#error powerpc no endian specified
+ #endif
+ 
+ #define	_SUNOS_VTOC_16
