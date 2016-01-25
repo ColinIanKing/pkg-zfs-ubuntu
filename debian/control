@@ -187,6 +187,7 @@ Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: zfs-dkms
 Suggests: samba-common-bin (>= 3.0.23), nfs-kernel-server, zfs-initramfs
 Conflicts: zfs, zfs-fuse
+Provides: zfs
 Replaces: zfs
 Description: Native OpenZFS management utilities for Linux
  This package provides the zpool and zfs commands that are used to

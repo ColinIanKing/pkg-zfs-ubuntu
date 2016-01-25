@@ -1,3 +1,11 @@
+zfs-linux (0.6.5.3-0ubuntu6) xenial; urgency=medium
+
+  * zfs-initramfs: Support GRUB's native root=ZFS= (LP: #1530953)
+    - from https://github.com/zfsonlinux/pkg-zfs/pull/140 (Richard Laager)
+  * debian/control: Add missing "Provides: zfs" (LP: #1535428)
+
+ -- Colin Ian King <colin.king@canonical.com>  Thu, 21 Jan 2016 11:09:01 +0000
+
 zfs-linux (0.6.5.3-0ubuntu5) xenial; urgency=medium
 
   * Add adt smoke tests checking basic core ZFS functionality
