@@ -95,8 +95,26 @@ override_dh_installdocs:
 	dh_installdocs --link-doc=zfs-doc
 
 override_dh_installinit:
+	# zfs.target isn't automatically handled by dh_systemd(?)
+	dh_systemd_enable -p zfsutils-linux zfs.target
+
+	@# Install debian/zfs-zed.zed.upstart as /etc/init/zed.conf
+	@# and debian/zfs-zed.zed.service as /lib/systemd/system/zed.service
+	dh_installinit --name=zed
+
+	@# Install debian/zfsutils.zfs.default as /etc/default/zfs.
+	dh_installinit --name=zfs
+
+	@# Install debian/zfsutils.zpool-import.upstart as /etc/init/zpool-import.conf.
+	dh_installinit --name=zpool-import --no-restart-on-upgrade --no-start
+
 	@# Ubuntu runs nfs-kernel-server at sysv sequence 20 80 and iscsitarget at 20 20.
 	dh_installinit --name=zfs-share --no-restart-on-upgrade --no-start -- defaults 25 15
+
+	@# Only for systemd:
+	dh_installinit --name=zfs-import-cache
+	dh_installinit --name=zfs-import-scan
+	dh_installinit --name=zfs-mount
 
 override_dh_installudev:
 	dh_installudev --name=zvol --priority=60

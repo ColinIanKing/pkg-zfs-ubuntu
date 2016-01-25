@@ -1,3 +1,17 @@
+zfs-linux (0.6.5.3-0ubuntu4) xenial; urgency=medium
+
+  * Add dependency on dh-systemd for zfs-linux (LP: #1521952)
+   - Add installinit rules for zed, zfs, mounting and import cache/scan
+   - Copy zfs.target to /lib/systemd/system
+   - Add bash completion rules
+   - Add zed systemd service control
+   - Add zfs shared systemd service control
+   - Add zfs mount systemd service control
+   - Add zfs import scan systemd service control
+   - Add zfs import cache systemd service control
+
+ -- Colin Ian King <colin.king@canonical.com>  Wed, 2 Dec 2015 16:50:00 +0000
+
 zfs-linux (0.6.5.3-0ubuntu3) xenial; urgency=medium
 
   * Build for powerpc64-smp
