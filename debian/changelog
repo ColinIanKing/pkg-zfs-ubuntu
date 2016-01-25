@@ -1,12 +1,28 @@
-zfs-linux (0.6.4.2-0ubuntu1.1) wily; urgency=medium
+zfs-linux (0.6.5.3-0ubuntu2) xenial; urgency=medium
 
-  * Fix FTBFSs on ppc64el and arm64 (LP: #1513124):
-   - ppc64el: drop endian override in powerpc architecture definition
-     allowing both big and little endian builds.
-   - zfs-initramfs -- this is only build on the indep architecture so only
-     attempt to chmod the hook files if they are present.
-   - arm64: reorder sys/types.h sys/param.h includes to avoid include ordering
-     issues on arm64.
+  * Dropped autogen output from orig tarball.
+  * update debian/gbp.conf from wily to xenial
+
+ -- Tim Gardner <tim.gardner@canonical.com>  Tue, 27 Oct 2015 18:16:11 +0000
+
+zfs-linux (0.6.5.3-0ubuntu1) xenial; urgency=medium
+
+  * Updated to zfs-0.6.5.3 from https://github.com/zfsonlinux/zfs.git
+  * Dropped:
+     Linux 4.2 compat: bdi_setup_and_register()
+     Linux 4.2 compat: remove bio->bi_cnt access
+     Linux 4.2 compat: follow_link() / put_link()
+
+ -- Tim Gardner <tim.gardner@canonical.com>  Tue, 27 Oct 2015 10:50:44 -0600
+
+zfs-linux (0.6.4.2-0ubuntu2~apw8) wily; urgency=medium
+
+  * ppc64el: drop endian override in powerpc architecture definition
+    allowing both big and little endian builds.
+  * zfs-initramfs -- this is only build on the indep architecture so only
+    attempt to chmod the hook files if they are present.
+  * arm64: reorder sys/types.h sys/param.h includes to avoid include ordering
+    issues on arm64.
 
  -- Andy Whitcroft <apw@ubuntu.com>  Fri, 16 Oct 2015 13:57:18 +0100
 
