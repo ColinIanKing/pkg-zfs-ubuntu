@@ -1,3 +1,9 @@
+zfs-linux (0.6.5.3-0ubuntu3) xenial; urgency=medium
+
+  * Build for powerpc64-smp
+
+ -- Tim Gardner <tim.gardner@canonical.com>  Fri, 06 Nov 2015 14:20:13 -0700
+
 zfs-linux (0.6.5.3-0ubuntu2) xenial; urgency=medium
 
   * Dropped autogen output from orig tarball.
