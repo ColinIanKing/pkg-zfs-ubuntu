@@ -7,7 +7,7 @@ Build-Depends: autotools-dev,
  autoconf,
  autogen,
  automake,
- debhelper (>= 8),
+ debhelper (>= 7),
  dh-autoreconf,
  dh-systemd,
  dkms (>= 2.2.0.2),
@@ -16,8 +16,7 @@ Build-Depends: autotools-dev,
  uuid-dev,
  zlib1g-dev,
 Standards-Version: 3.9.6
-Vcs-Git: git://github.com/dajhorn/pkg-zfs.git
-Vcs-Browser: http://github.com/dajhorn/pkg-zfs
+Homepage: https://github.com/zfsonlinux/zfs/releases/tag/zfs-0.6.5.4
 
 Package: libnvpair1linux
 Section: libs

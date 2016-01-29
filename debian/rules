@@ -65,13 +65,17 @@ override_dh_fixperms:
 
 	@# Prevent execute bits from being stripped by the Launchpad pbuilder.
 	$(CHMOD) a+x '$(CURDIR)'/debian/zfsutils-linux/usr/share/initramfs-tools/hooks/*
-	if [ -d '$(CURDIR)'/debian/zfs-initramfs ]; then \
+	if [ -d '$(CURDIR)'/debian/zfs-initramfs/usr/share/initramfs-tools/hooks ]; then \
 		$(CHMOD) a+x '$(CURDIR)'/debian/zfs-initramfs/usr/share/initramfs-tools/hooks/*; \
 	fi
 
 override_dh_install:
 	@# Exclude the upstream /usr/lib/udev/rules.d files.
 	dh_install -X/rules.d/
+
+	$(INSTALL) -d '$(CURDIR)/debian/zfs-initramfs/lib/udev/rules.d'
+	$(INSTALL) -m 644 '$(CURDIR)/debian/tree/zfs-initramfs/lib/udev/rules.d'/* \
+		'$(CURDIR)/debian/zfs-initramfs/lib/udev/rules.d/'
 
 	@# Ensure that /etc/zfs is in the zfsutils package
 	@# because git has difficulty tracking empty directories.
@@ -115,6 +119,7 @@ override_dh_installinit:
 	dh_installinit --name=zfs-import-cache
 	dh_installinit --name=zfs-import-scan
 	dh_installinit --name=zfs-mount
+	dh_systemd_start
 
 override_dh_installudev:
 	dh_installudev --name=zvol --priority=60

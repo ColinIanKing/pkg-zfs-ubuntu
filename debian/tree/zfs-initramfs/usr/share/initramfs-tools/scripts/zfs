@@ -1,43 +1,21 @@
 # ZFS boot stub for initramfs-tools.
-#
-# In the initramfs environment, the /init script sources this stub to
-# override the default functions in the /scripts/local script.
-#
-# Enable this by passing boot=zfs on the kernel command line.
-#
 
-
-pre_mountroot()
+zfs_test_import()
 {
-	[ "$quiet" != "y" ] && log_begin_msg "Running /scripts/local-top"
-	run_scripts /scripts/local-top
-	[ "$quiet" != "y" ] && log_end_msg
-
-	if [ -r '/etc/default/zfs' ]
+	ZFS_STDERR=$(zpool import -o readonly=on -N "$ZFS_RPOOL" 2>&1)
+	ZFS_ERROR=$?
+	if [ "$ZFS_ERROR" -eq 0 ]
 	then
-		. '/etc/default/zfs'
-		if [ "$ZFS_INITRD_PRE_MOUNTROOT_SLEEP" -gt '0' ]
-		then
-			[ "$quiet" != "y" ] && log_begin_msg "Sleeping for $ZFS_INITRD_PRE_MOUNTROOT_SLEEP seconds..."
-			sleep "$ZFS_INITRD_PRE_MOUNTROOT_SLEEP"
-			[ "$quiet" != "y" ] && log_end_msg
-		fi
+		ZFS_HEALTH=$(zpool list -H -o health "$ZFS_RPOOL" 2>/dev/null)
 	fi
-}
-
-# Duplicates the functionality found under try_failure_hooks in functions
-# but invoking that would be inappropriate here.
-disable_plymouth()
-{
-	if [ -x /bin/plymouth ] && /bin/plymouth --ping
-	then
-		/bin/plymouth hide-splash >/dev/null 2>&1
-	fi
+	zpool export "$ZFS_RPOOL" >/dev/null 2>&1
 }
 
 mountroot()
 {
-	pre_mountroot
+	[ "$quiet" != "y" ] && log_begin_msg "Running /scripts/local-top"
+	run_scripts /scripts/local-top
+	[ "$quiet" != "y" ] && log_end_msg
 
 	[ "$quiet" != "y" ] && log_begin_msg "Running /scripts/local-premount"
 	run_scripts /scripts/local-premount
@@ -46,90 +24,47 @@ mountroot()
 	# Wait for all of the /dev/{hd,sd}[a-z] device nodes to appear.
 	wait_for_udev
 
-	# Load the module now to get consistent automatic pool import behavior.
-	modprobe zfs
+	modprobe zfs zfs_autoimport_disable=1
 
-	# Check the kernel command line for overrides.
-	ZFS_RPOOL="${rpool#rpool=}"
-	ZFS_BOOTFS="${bootfs#bootfs=}"
+	ZFS_BOOTFS=${ROOT#ZFS=}
+	ZFS_RPOOL=$(echo "$ZFS_BOOTFS" | sed -e 's,/.*,,')
 
-	if [ -z "$ZFS_RPOOL" ]
+	delay=${ROOTDELAY:-0}
+
+	if [ "$delay" -gt 0 ]
 	then
-		# Check for the `-B zfs-bootfs=%s/%u,...` kind of parameter.
-		#
-		# The ${zfs-bootfs} variable is set at the kernel commmand
-		# line, usually by GRUB, but it cannot be referenced here
-		# directly because bourne variable names cannot contain a
-		# hyphen.
-		#
-		# Reassign the variable by dumping the environment and
-		# stripping the zfs-bootfs= prefix.  Let the shell handle
-		# quoting through the eval command.
-		eval ZFS_RPOOL=$(set | sed -n -e 's,^zfs-bootfs=,,p')
-
-		# Only the pool name is relevant because the ZFS filesystem on
-		# Linux is extrinsic and the userland cannot resolve a ZFS
-		# object number.
-		#
-		# Strip everything after the first slash character.
-		ZFS_RPOOL=$(echo "$ZFS_RPOOL" | sed -e 's,/.*,,')
+		# Try to import the pool read-only.  If it does not import with
+		# the ONLINE status, wait and try again.  The pool could be
+		# DEGRADED because a drive is really missing, or it might just
+		# be slow to be detected.
+		zfs_test_import
+		retry_nr=0
+		while [ "$retry_nr" -lt "$delay" ] && [ "$ZFS_HEALTH" != "ONLINE" ]
+		do
+			[ "$quiet" != "y" ] && log_begin_msg "Retrying ZFS read-only import"
+			/bin/sleep 1
+			zfs_test_import
+			retry_nr=$(( $retry_nr + 1 ))
+			[ "$quiet" != "y" ] && log_end_msg
+		done
+		unset retry_nr
+		unset ZFS_HEALTH
 	fi
+	unset delay
 
-	if [ -z "$ZFS_RPOOL" ]
-	then
-		ZFS_BOOTFS=${ROOT#ZFS=}
-		ZFS_RPOOL=$(echo "$ZFS_BOOTFS" | sed -e 's,/.*,,')
-	fi
-
-	# Use "rpool" as the default, like on most Solaris systems.
-	[ -z "$ZFS_RPOOL" ] && ZFS_RPOOL='rpool'
-
-	# @FIXME: Forcing the import should not be necessary.
-	#
-	# Consider inhibiting automatic zpool imports in the initramfs
-	# environment and doing a full import in the regular system instead.
-
-	[ "$quiet" != "y" ] && log_begin_msg "Importing ZFS root pool $ZFS_RPOOL"
-	if [ -f /etc/zfs/zpool.cache ]
-	then
-		ZFS_STDERR=$(zpool list "$ZFS_RPOOL" 1>/dev/null 2>&1 \
-		  || zpool import -f -N "$ZFS_RPOOL" 2>&1)
-		ZFS_ERROR=$?
-	else
-		ZFS_STDERR=$(zpool import -f -N "$ZFS_RPOOL" 2>&1)
-		ZFS_ERROR=$?
-	fi
-	[ "$quiet" != "y" ] && log_end_msg
+	# At this point, the pool either imported cleanly, or we ran out of the
+	# allowed time (rootdelay).  Perform the read-write import.
+	ZFS_STDERR=$(zpool import -N "$ZFS_RPOOL" 2>&1)
+	ZFS_ERROR=$?
 
 	if [ "$ZFS_ERROR" -ne 0 ]
 	then
-		disable_plymouth
-		echo "Command: zpool import -f -N $ZFS_RPOOL"
-		echo "Message: $ZFS_STDERR"
-		echo "Error: $ZFS_ERROR"
-		echo ""
-		echo "Manually import the root pool at the command prompt and then exit."
-		echo "Hint: Try:  zpool import -f -R / -N $ZFS_RPOOL"
-		/bin/sh
-	fi
+		panic "Command: zpool import -N $ZFS_RPOOL
+Message: $ZFS_STDERR
+Error: $ZFS_ERROR
 
-	if [ -z "$ZFS_BOOTFS" ]
-	then
-		[ "$quiet" != "y" ] && log_begin_msg "Getting ZFS bootfs property"
-		ZFS_BOOTFS=$(zpool list -H -o bootfs "$ZFS_RPOOL")
-		ZFS_ERROR=$?
-		[ "$quiet" != "y" ] && log_end_msg
-	fi
-
-	if [ -z "$ZFS_BOOTFS" ]
-	then
-		disable_plymouth
-		echo "Command: zpool list -H -o bootfs $ZFS_RPOOL"
-		echo "Error: $ZFS_ERROR, unable to get the bootfs property."
-		echo ""
-		echo "Manually mount the root filesystem on $rootmnt and then exit."
-		echo "Hint: Try:  mount -t zfs -o zfsutil $ZFS_RPOOL/ROOT/system $rootmnt"
-		/bin/sh	
+Manually import the root pool at the command prompt and then exit.
+Hint: Try:  zpool import -f -R / -N $ZFS_RPOOL"
 	fi
 
 	# Force the mountpoint to the only correct value for a root filesystem.
@@ -153,15 +88,17 @@ mountroot()
 
 	if [ "$ZFS_ERROR" -ne 0 ]
 	then
-		disable_plymouth
-		echo ""
-		echo "Command: mount -t zfs -o zfsutil $ZFS_BOOTFS $rootmnt"
-		echo "Message: $ZFS_STDERR"
-		echo "Error: $ZFS_ERROR"
-		echo ""
-		echo "Manually mount the root filesystem on $rootmnt and then exit."
-		/bin/sh	
+		panic "Command: mount -t zfs -o zfsutil $ZFS_BOOTFS $rootmnt
+Message: $ZFS_STDERR
+Error: $ZFS_ERROR
+
+Manually mount the root filesystem on $rootmnt and then exit."
 	fi
+
+	unset ZFS_BOOTFS
+	unset ZFS_RPOOL
+	unset ZFS_STDERR
+	unset ZFS_ERROR
 
 	[ "$quiet" != "y" ] && log_begin_msg "Running /scripts/local-bottom"
 	run_scripts /scripts/local-bottom

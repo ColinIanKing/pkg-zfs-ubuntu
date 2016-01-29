@@ -1,3 +1,27 @@
+zfs-linux (0.6.5.4-0ubuntu2) xenial; urgency=medium
+
+  [ Colin Ian King ]
+  * Start ZFS post install with dh_systemd_start (LP: #1542276)
+  * Fix perms on initramfs-tools/hooks if they exist
+  * install bash completions to usr/share/bash-completion/completions
+  * debian/control: add in Homepage field
+
+  [ Richard Laager ]
+  * Add /lib/udev/rules.d/60-zfs.rules to create symlinks for GRUB (LP: #1530953)
+  * debian/control: Remove incorrect Vcs-Git and Vcs-Browser
+  * zfs-initramfs: Re-architect initramfs script
+    - Require root=ZFS= syntax.  rpool= and bootfs= are no longer supported.
+    - Honor Debian standard rootdelay= kernel command-line option instead of
+      ZFS_INITRD_PRE_MOUNTROOT_SLEEP.
+    - Use standard panic function, which honors the Debian standard panic=
+      kernel command-line option.
+    - Stop force importing the pool.
+    - Add debian/zfs-initramfs.postinst to apply udev rules without a reboot
+    - Update 60-zpool.rules to match on partition type to trigger on the 
+      initial pool creation.
+
+ -- Colin Ian King <colin.king@canonical.com>  Tue, 9 Feb 2016 09:14:44 +0000
+
 zfs-linux (0.6.5.4-0ubuntu1) xenial; urgency=medium
 
   * Sync with upstream 0.6.5.4 release
