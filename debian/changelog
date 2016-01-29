@@ -1,3 +1,9 @@
+zfs-linux (0.6.5.4-0ubuntu1) xenial; urgency=medium
+
+  * Sync with upstream 0.6.5.4 release
+
+ -- Colin Ian King <colin.king@canonical.com>  Fri, 29 Jan 2016 11:48:00 +0000
+
 zfs-linux (0.6.5.3-0ubuntu6) xenial; urgency=medium
 
   * zfs-initramfs: Support GRUB's native root=ZFS= (LP: #1530953)
