@@ -183,7 +183,7 @@ Package: zfsutils-linux
 Section: admin
 Architecture: amd64 arm64 ppc64el powerpc64-smp
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Recommends: zfs-dkms
+Recommends: zfs-dkms, zfs-zed
 Suggests: samba-common-bin (>= 3.0.23), nfs-kernel-server, zfs-initramfs
 Conflicts: zfs, zfs-fuse
 Provides: zfs

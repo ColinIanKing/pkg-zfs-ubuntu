@@ -1,3 +1,9 @@
+zfs-linux (0.6.5.4-0ubuntu3) xenial; urgency=medium
+
+  * zfsutils-linux should Recommend zfs-zed (LP: #1547549)
+
+ -- Colin Ian King <colin.king@canonical.com>  Fri, 19 Feb 2016 15:23:11 +0000
+
 zfs-linux (0.6.5.4-0ubuntu2) xenial; urgency=medium
 
   [ Colin Ian King ]
