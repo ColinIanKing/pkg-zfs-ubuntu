@@ -1,3 +1,13 @@
+zfs-linux (0.6.5.4-0ubuntu4) xenial; urgency=medium
+
+  [ Richard Laager ]
+  * Make zed work out-of-the box (LP: #1542276)
+    - zfs-zed: Install zed-functions.sh so scriptlets work
+    - zfs-zed: Enable most scriptlets on a fresh install.
+    - zfs-zed: Email root by default.
+
+ -- Colin Ian King <colin.king@canonical.com>  Wed, 24 Feb 2016 04:49:35 +0000
+
 zfs-linux (0.6.5.4-0ubuntu3) xenial; urgency=medium
 
   * zfsutils-linux should Recommend zfs-zed (LP: #1547549)
