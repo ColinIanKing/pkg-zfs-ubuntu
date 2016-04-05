@@ -1,3 +1,10 @@
+zfs-linux (0.6.5.6-0ubuntu5) xenial; urgency=medium
+
+  * Only enable testing on 64 bit arches as these are the ones that ZFS
+    officially supports.
+
+ -- Colin Ian King <colin.king@canonical.com>  Tue, 5 Apr 2016 09:37:37 +0100
+
 zfs-linux (0.6.5.6-0ubuntu4) xenial; urgency=medium
 
   * Drop mail-transport-agent to Suggests, and add default-mta preference.
