@@ -1,3 +1,9 @@
+zfs-linux (0.6.5.6-0ubuntu7) xenial; urgency=medium
+
+  * Libraries should not be in /lib, but in /usr/lib (LP: #1569359)
+
+ -- Colin Ian King <colin.king@canonical.com>  Tue, 12 Apr 2016 12:54:17 +0100
+
 zfs-linux (0.6.5.6-0ubuntu6) xenial; urgency=medium
 
   * Remove adm, admin, staff groups from /etc/sudoers.d/zfs

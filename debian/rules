@@ -81,17 +81,8 @@ override_dh_install:
 	@# Ensure that /etc/zfs is in the zfsutils package
 	@# because git has difficulty tracking empty directories.
 	$(INSTALL) -d '$(CURDIR)/debian/zfsutils-linux/etc/zfs/'
+	$(INSTALL) -d '$(CURDIR)/debian/libzfslinux-dev/usr/lib/zfs-linux/'
 
-	@# Resolve lintian errors regarding Debian Policy Manual Section 8.4
-	@# by moving unversioned library links from /lib to /usr/lib in the
-	@# development package. Look at libc6-dev for a packaging example if
-	@# multiarch support ever becomes a concern here.
-	$(INSTALL) -d '$(CURDIR)/debian/libzfslinux-dev/usr/lib/'
-	cd '$(CURDIR)/debian/libzfslinux-dev/lib' && \
-	for ii in $$(find -type l); do \
-	  ln -s "../../lib/$$(readlink "$$ii")" "../usr/lib/$$(basename "$$ii")" \
-	  && rm "$$ii"; \
-	done
 
 	# No need to ship .la files
 	find . -name lib*.la -delete
