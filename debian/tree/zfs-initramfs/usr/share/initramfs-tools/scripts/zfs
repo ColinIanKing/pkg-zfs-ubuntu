@@ -67,6 +67,23 @@ Manually import the root pool at the command prompt and then exit.
 Hint: Try:  zpool import -f -R / -N $ZFS_RPOOL"
 	fi
 
+	# Set elevator=noop on the root pool's vdevs' disks.  ZFS already
+	# does this for wholedisk vdevs (for all pools), so this is only
+	# important for partitions.
+	zpool status -L "$ZFS_RPOOL" 2>/dev/null |
+		awk '/^\t / && !/(mirror|raidz)/ {
+			dev=$1;
+			sub(/[0-9]+$/, "", dev);
+			print dev
+		}' |
+		while read i
+	do
+		if [ -e "/sys/block/$i/queue/scheduler" ]
+		then
+			echo noop > "/sys/block/$i/queue/scheduler"
+		fi
+	done
+
 	# Force the mountpoint to the only correct value for a root filesystem.
 	[ "$quiet" != "y" ] && log_begin_msg "Setting mountpoint=/ on ZFS filesystem $ZFS_BOOTFS"
 	ZFS_STDERR=$(zfs set mountpoint=/ "$ZFS_BOOTFS" 2>&1)
