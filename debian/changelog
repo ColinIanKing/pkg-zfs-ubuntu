@@ -1,3 +1,21 @@
+zfs-linux (0.6.5.6-0ubuntu9) xenial; urgency=medium
+
+  * Minor changes to satisfy MIR request (LP: #1579082)
+    [ Richard Laager ]
+    - zfs-zed: Version "Replaces: zfsutils-linux" and add versioned
+     "Breaks: zfsutils-linux"
+    - explicitly specify the man pages so we don't include zed.8
+    [ Colin Ian King ]
+    - remove root ALL=(ALL) ALL and R_ROOT from
+      debian/tree/zfsutils-linux/etc/sudoers.d/zfs. The R_ROOT serves
+      no useful purpose, complicates people actually using the sudoers
+      file, and pollutes the global namespace
+    - add init.d linitan overrides for zfsutils-linux and zfs-zed
+      as initscripts will never be used and we will rebase with the
+      Debian package initscripts once the package gets accepted by Debian
+
+ -- Colin Ian King <colin.king@canonical.com>  Wed, 11 May 2016 19:40:11 +0100
+
 zfs-linux (0.6.5.6-0ubuntu8) xenial; urgency=medium
 
   [ Richard Laager ]
