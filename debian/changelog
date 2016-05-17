@@ -1,3 +1,11 @@
+zfs-linux (0.6.5.7-0ubuntu1) yakkety; urgency=medium
+
+  [ Colin Ian King ]
+  * Sync with upstream 0.6.5.7 release
+  * Update Debian/control Standards-Version to 3.9.8
+
+ -- Colin Ian King <colin.king@canonical.com>  Tue, 17 May 2016 09:40:01 +0100
+
 zfs-linux (0.6.5.6-0ubuntu8) xenial; urgency=medium
 
   [ Richard Laager ]
