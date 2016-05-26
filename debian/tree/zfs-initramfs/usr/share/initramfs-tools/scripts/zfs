@@ -8,7 +8,16 @@ zfs_test_import()
 	then
 		ZFS_HEALTH=$(zpool list -H -o health "$ZFS_RPOOL" 2>/dev/null)
 	fi
-	zpool export "$ZFS_RPOOL" >/dev/null 2>&1
+	while [ "$retry_nr" -lt "$delay" ]
+	do
+		ZFS_STDERR=$(zpool export "$ZFS_RPOOL" 2>&1)
+		if ! echo "$ZFS_STDERR" | grep -q "is busy"
+		then
+			break
+		fi
+		/bin/sleep 1
+		retry_nr=$(( $retry_nr + 1 ))
+	done
 }
 
 mountroot()
@@ -37,8 +46,8 @@ mountroot()
 		# the ONLINE status, wait and try again.  The pool could be
 		# DEGRADED because a drive is really missing, or it might just
 		# be slow to be detected.
-		zfs_test_import
 		retry_nr=0
+		zfs_test_import
 		while [ "$retry_nr" -lt "$delay" ] && [ "$ZFS_HEALTH" != "ONLINE" ]
 		do
 			[ "$quiet" != "y" ] && log_begin_msg "Retrying ZFS read-only import"

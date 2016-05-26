@@ -1,3 +1,25 @@
+zfs-linux (0.6.5.7-0ubuntu2) yakkety; urgency=medium
+
+  * Minor changes to satisfy MIR request (LP: #1579082)
+    [ Richard Laager ]
+    - zfs-zed: Version "Replaces: zfsutils-linux" and add versioned
+     "Breaks: zfsutils-linux"
+    - explicitly specify the man pages so we don't include zed.8
+    [ Colin Ian King ]
+    - remove root ALL=(ALL) ALL and R_ROOT from
+      debian/tree/zfsutils-linux/etc/sudoers.d/zfs. The R_ROOT serves
+      no useful purpose, complicates people actually using the sudoers
+      file, and pollutes the global namespace
+    - add init.d linitan overrides for zfsutils-linux and zfs-zed
+      as initscripts will never be used and we will rebase with the
+      Debian package initscripts once the package gets accepted by Debian
+  [ Richard Laager ]
+  * zfs-initramfs: When rootdelay is set, retry the `zpool export` command
+    until it stops returning "is busy" (or the rootdelay expires).
+    (LP: #1577057)
+
+ -- Colin Ian King <colin.king@canonical.com>  Thu, 26 May 2016 15:28:13 +0100
+
 zfs-linux (0.6.5.7-0ubuntu1) yakkety; urgency=medium
 
   [ Colin Ian King ]
