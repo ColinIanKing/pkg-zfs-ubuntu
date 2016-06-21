@@ -1,0 +1,32 @@
+From 60a4ea3f948f1596b92b666fc7dd21202544edbb Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 14 Apr 2016 08:58:09 +0100
+Subject: [PATCH] Fix inverted logic on none elevator comparison
+
+Commit d1d7e2689db9e03f1 ("cstyle: Resolve C style issues") inverted
+the logic on the none elevator comparison.  Fix this and make it
+cstyle warning clean.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Brian Behlendorf <behlendorf1@llnl.gov>
+Closes #4507
+---
+ module/zfs/vdev_disk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/module/zfs/vdev_disk.c b/module/zfs/vdev_disk.c
+index ebf0e8b..cdb8f78 100644
+--- a/module/zfs/vdev_disk.c
++++ b/module/zfs/vdev_disk.c
+@@ -139,7 +139,7 @@ vdev_elevator_switch(vdev_t *v, char *elevator)
+ 		return (0);
+ 
+ 	/* Leave existing scheduler when set to "none" */
+-	if (strncmp(elevator, "none", 4) && (strlen(elevator) == 4) == 0)
++	if ((strncmp(elevator, "none", 4) == 0) && (strlen(elevator) == 4))
+ 		return (0);
+ 
+ #ifdef HAVE_ELEVATOR_CHANGE
+-- 
+2.7.4
+

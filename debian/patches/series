@@ -6,3 +6,12 @@
 1001-Fix-aarch64-compilation.patch
 1002-Add-support-32-bit-FS_IOC32_-GET-SET-FLAGS-compat-io.patch
 enable-zed.patch
+1003-Fix-user-namespaces-uid-gid-mapping.patch
+1004-Fix-ZPL-miswrite-of-default-POSIX-ACL.patch
+1005-Create-unique-partition-labels.patch
+1006-Fix-inverted-logic-on-none-elevator-comparison.patch
+1007-Remove-wrong-ASSERT-in-annotate_ecksum.patch
+1008-Fix-zpool-import-blkid-device-names.patch
+1009-Use-udev-for-partition-detection.patch
+1010-Enable-PF_FSTRANS-for-ioctl-secpolicy-callbacks-4571.patch
+1011-Fix-ztest-truncated-cache-file.patch

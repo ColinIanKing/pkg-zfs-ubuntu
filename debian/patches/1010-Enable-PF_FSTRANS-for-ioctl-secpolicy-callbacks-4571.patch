@@ -1,0 +1,37 @@
+From 52475b507ab44481b73337682b4c9c44920b0cdf Mon Sep 17 00:00:00 2001
+From: Tim Chase <tim@chase2k.com>
+Date: Mon, 2 May 2016 12:00:50 -0500
+Subject: [PATCH] Enable PF_FSTRANS for ioctl secpolicy callbacks (#4571)
+
+At the very least, the zfs_secpolicy_write_perms ioctl security policy
+callback, which calls dsl_dataset_hold(), can require freeing memory and,
+therefore, re-enter ZFS.  This patch enables PF_FSTRANS for all of the
+security policy callbacks similarly to the manner in which it's enabled
+for the actual ioctl callback.
+
+Signed-off-by: Brian Behlendorf <behlendorf1@llnl.gov>
+Closes #4554
+---
+ module/zfs/zfs_ioctl.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/module/zfs/zfs_ioctl.c b/module/zfs/zfs_ioctl.c
+index 12d2750..745f713 100644
+--- a/module/zfs/zfs_ioctl.c
++++ b/module/zfs/zfs_ioctl.c
+@@ -5817,8 +5817,11 @@ zfsdev_ioctl(struct file *filp, unsigned cmd, unsigned long arg)
+ 	}
+ 
+ 
+-	if (error == 0 && !(flag & FKIOCTL))
++	if (error == 0 && !(flag & FKIOCTL)) {
++		cookie = spl_fstrans_mark();
+ 		error = vec->zvec_secpolicy(zc, innvl, CRED());
++		spl_fstrans_unmark(cookie);
++	}
+ 
+ 	if (error != 0)
+ 		goto out;
+-- 
+2.7.4
+

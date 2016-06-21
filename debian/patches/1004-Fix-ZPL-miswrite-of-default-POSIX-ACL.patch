@@ -1,0 +1,31 @@
+From 6400ae85eeaa810743cbb46da184ea068a9934a9 Mon Sep 17 00:00:00 2001
+From: Ned Bass <bass6@llnl.gov>
+Date: Fri, 15 Apr 2016 18:55:03 +0000
+Subject: [PATCH] Fix ZPL miswrite of default POSIX ACL
+
+Commit 4967a3e introduced a typo that caused the ZPL to store the
+intended default ACL as an access ACL. Due to caching this problem
+may not become visible until the filesystem is remounted or the inode
+is evicted from the cache. Fix the typo.
+
+Signed-off-by: Ned Bass <bass6@llnl.gov>
+Signed-off-by: Brian Behlendorf <behlendorf1@llnl.gov>
+Signed-off-by: Chunwei Chen <tuxoko@gmail.com>
+Closes #4520
+---
+ module/zfs/zpl_xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: zfs-linux-0.6.5.6/module/zfs/zpl_xattr.c
+===================================================================
+--- zfs-linux-0.6.5.6.orig/module/zfs/zpl_xattr.c
++++ zfs-linux-0.6.5.6/module/zfs/zpl_xattr.c
+@@ -969,7 +969,7 @@ zpl_set_acl(struct inode *ip, int type,
+ 		break;
+ 
+ 	case ACL_TYPE_DEFAULT:
+-		name = XATTR_NAME_POSIX_ACL_ACCESS;
++		name = XATTR_NAME_POSIX_ACL_DEFAULT;
+ 		if (!S_ISDIR(ip->i_mode))
+ 			return (acl ? -EACCES : 0);
+ 		break;

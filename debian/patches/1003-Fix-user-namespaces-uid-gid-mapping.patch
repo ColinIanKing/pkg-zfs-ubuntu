@@ -1,0 +1,48 @@
+From a64fb11bf3471377913a2042df6190e26a733e54 Mon Sep 17 00:00:00 2001
+From: Brian Behlendorf <behlendorf1@llnl.gov>
+Date: Thu, 28 Apr 2016 11:45:46 -0700
+Subject: [PATCH] Fix user namespaces uid/gid mapping
+
+As described in torvalds/linux@5f3a4a2 the &init_user_ns, and
+not the current user_ns, should be passed to posix_acl_from_xattr()
+and posix_acl_to_xattr().  Conveniently the init_user_ns is
+available through the init credential (kcred).
+
+Signed-off-by: Brian Behlendorf <behlendorf1@llnl.gov>
+Issue #4177
+---
+ include/linux/xattr_compat.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/xattr_compat.h b/include/linux/xattr_compat.h
+index eee6c1f..5e19ea1 100644
+--- a/include/linux/xattr_compat.h
++++ b/include/linux/xattr_compat.h
+@@ -190,20 +190,20 @@ fn(struct inode *ip, const char *name, const void *buffer,		\
+ 
+ /*
+  * Linux 3.7 API change. posix_acl_{from,to}_xattr gained the user_ns
+- * parameter.  For the HAVE_POSIX_ACL_FROM_XATTR_USERNS version the
+- * userns _may_ not be correct because it's used outside the RCU.
++ * parameter.  All callers are expected to pass the &init_user_ns which
++ * is available through the init credential (kcred).
+  */
+ #ifdef HAVE_POSIX_ACL_FROM_XATTR_USERNS
+ static inline struct posix_acl *
+ zpl_acl_from_xattr(const void *value, int size)
+ {
+-	return (posix_acl_from_xattr(CRED()->user_ns, value, size));
++	return (posix_acl_from_xattr(kcred->user_ns, value, size));
+ }
+ 
+ static inline int
+ zpl_acl_to_xattr(struct posix_acl *acl, void *value, int size)
+ {
+-	return (posix_acl_to_xattr(CRED()->user_ns, acl, value, size));
++	return (posix_acl_to_xattr(kcred->user_ns, acl, value, size));
+ }
+ 
+ #else
+-- 
+2.7.4
+

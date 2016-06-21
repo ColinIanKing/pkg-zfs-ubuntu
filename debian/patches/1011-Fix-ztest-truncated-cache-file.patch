@@ -1,0 +1,43 @@
+From 151f84e2c32f690b92c424d8c55d2dfccaa76e51 Mon Sep 17 00:00:00 2001
+From: Brian Behlendorf <behlendorf1@llnl.gov>
+Date: Mon, 21 Dec 2015 17:02:22 -0500
+Subject: [PATCH] Fix ztest truncated cache file
+
+Commit efc412b updated spa_config_write() for Linux 4.2 kernels to
+truncate and overwrite rather than rename the cache file.  This is
+the correct fix but it should have only been applied for the kernel
+build.  In user space rename(2) is needed because ztest depends on
+the cache file.
+
+Signed-off-by: Brian Behlendorf <behlendorf1@llnl.gov>
+Closes #4129
+---
+ module/zfs/spa_config.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/module/zfs/spa_config.c b/module/zfs/spa_config.c
+index 929f181..19432e0 100644
+--- a/module/zfs/spa_config.c
++++ b/module/zfs/spa_config.c
+@@ -174,7 +174,7 @@ spa_config_write(spa_config_dirent_t *dp, nvlist_t *nvl)
+ 	VERIFY(nvlist_pack(nvl, &buf, &buflen, NV_ENCODE_XDR,
+ 	    KM_SLEEP) == 0);
+ 
+-#ifdef __linux__
++#if defined(__linux__) && defined(_KERNEL)
+ 	/*
+ 	 * Write the configuration to disk.  Due to the complexity involved
+ 	 * in performing a rename from within the kernel the file is truncated
+@@ -201,7 +201,8 @@ spa_config_write(spa_config_dirent_t *dp, nvlist_t *nvl)
+ 	 */
+ 	(void) snprintf(temp, MAXPATHLEN, "%s.tmp", dp->scd_path);
+ 
+-	if (vn_open(temp, UIO_SYSSPACE, oflags, 0644, &vp, CRCREAT, 0) == 0) {
++	error = vn_open(temp, UIO_SYSSPACE, oflags, 0644, &vp, CRCREAT, 0);
++	if (error == 0) {
+ 		if (vn_rdwr(UIO_WRITE, vp, buf, buflen, 0, UIO_SYSSPACE,
+ 		    0, RLIM64_INFINITY, kcred, NULL) == 0 &&
+ 		    VOP_FSYNC(vp, FSYNC, kcred, NULL) == 0) {
+-- 
+2.8.1
+

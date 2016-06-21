@@ -1,3 +1,89 @@
+zfs-linux (0.6.5.6-0ubuntu10) xenial; urgency=medium
+
+  * Sync with relevant upstream fixes (LP: #1594871)
+   - Fix user namespaces uid/gid mapping 
+     As described in torvalds/linux@5f3a4a2 the &init_user_ns, and
+     not the current user_ns, should be passed to posix_acl_from_xattr()
+     and posix_acl_to_xattr().  Conveniently the init_user_ns is
+     available through the init credential (kcred).
+     (upstream commit 874bd959f4f15b3d4b007160ee7ad3f4111dd341)
+     ZFS #4177
+   - Fix ZPL miswrite of default POSIX ACL
+     Commit 4967a3e introduced a typo that caused the ZPL to store the
+     intended default ACL as an access ACL. Due to caching this problem
+     may not become visible until the filesystem is remounted or the inode
+     is evicted from the cache. Fix the typo.
+     (upstream commit 98f03691a4c08f38ca4538c468e9523f8e6b24be)
+     ZFS #4520
+   - Create unique partition labels
+     When partitioning a device a name may be specified for each partition.
+     Internally zfs doesn't use this partition name for anything so it
+     has always just been set to "zfs".
+     However this isn't optimal because udev will create symlinks using
+     this name in /dev/disk/by-partlabel/.  If the name isn't unique
+     then all the links cannot be created.
+     Therefore a random 64-bit value has been added to the partition
+     label, i.e "zfs-1234567890abcdef".  Additional information could
+     be encoded here but since partitions may be reused that might
+     result in confusion and it was decided against.
+     (upstream commit fbffa53a5cdb9b796de5afc9be8c1f79619253d4)
+     ZFS #4517
+   - Fix inverted logic on none elevator comparison
+     Commit d1d7e2689db9e03f1 ("cstyle: Resolve C style issues") inverted
+     the logic on the none elevator comparison.  Fix this and make it
+     cstyle warning clean.
+     (upstream commit 60a4ea3f948f1596b92b666fc7dd21202544edbb)
+     ZFS #4507
+   - Remove wrong ASSERT in annotate_ecksum
+     When using large blocks like 1M, there will be more than UINT16_MAX
+     qwords in one block, so this ASSERT would go off. Also, it is possible
+     for the histogram to overflow. We cap them to UINT16_MAX to prevent this.
+     (upstream commit 21ea9460fa880bb072a9ca9d845aef740f9d3af6)
+     ZFS #4257
+   - Fix 'zpool import' blkid device names
+     When importing a pool using the blkid cache only the device
+     node path was added to the list of known paths for a device.
+     This results in 'zpool import' always using the sdX names
+     in preference to the 'path' name stored in the label.
+     To fix the issue the blkid import path has been updated to
+     add both the 'path', 'devid', and 'devname' names from the
+     label to the known paths.  A sanity check is done to ensure
+     these paths do refer to the same device identified by blkid.
+     (upstream commit c9ca152fd1de1b0fd959e772b9a25d14a891952b)
+     ZFS #4523, #3043
+   - Use udev for partition detection
+     When ZFS partitions a block device it must wait for udev to create
+     both a device node and all the device symlinks.  This process takes
+     a variable length of time and depends on factors such how many links
+     must be created, the complexity of the rules, etc.  Complicating
+     the situation further it is not uncommon for udev to create and
+     then remove a link multiple times while processing the udev rules.
+     In order to address this the zpool_label_disk_wait() function
+     has been updated to use libudev.  Until the registered system
+     device acknowledges that it in fully initialized the function
+     will wait.  Once fully initialized all device links are checked
+     and allowed to settle for 50ms.  This makes it far more likely
+     that all the device nodes will exist when the kernel modules
+     need to open them.
+     For systems without libudev an alternate zpool_label_disk_wait()
+     was updated to include a settle time.  In addition, the kernel
+     modules were updated to include retry logic for this ENOENT case.
+     Due to the improved checks in the utilities it is unlikely this
+     logic will be invoked.  However, if the rare event it is needed
+     it will prevent a failure.
+     (upstream commit 2cb77346cb698ae0c233c7baf8b4c787205b54e9)
+     ZFS #4523, #3708, #4077, #4144, #4214, #4517 
+   * Fix ztest truncated cache file (LP: #1587686)
+     Commit efc412b updated spa_config_write() for Linux 4.2 kernels to
+     truncate and overwrite rather than rename the cache file.  This is
+     the correct fix but it should have only been applied for the kernel
+     build.  In user space rename(2) is needed because ztest depends on
+     the cache file.
+     (upstream commit 151f84e2c32f690b92c424d8c55d2dfccaa76e51)
+     ZFS #4129
+  
+ -- Colin Ian King <colin.king@canonical.com>  Tue, 21 Jun 2016 15:49:12 +0100
+
 zfs-linux (0.6.5.6-0ubuntu9) xenial; urgency=medium
 
   * Minor changes to satisfy MIR request (LP: #1579082)

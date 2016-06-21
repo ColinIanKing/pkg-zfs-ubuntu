@@ -1,0 +1,88 @@
+From fbffa53a5cdb9b796de5afc9be8c1f79619253d4 Mon Sep 17 00:00:00 2001
+From: Brian Behlendorf <behlendorf1@llnl.gov>
+Date: Wed, 13 Apr 2016 14:50:16 -0700
+Subject: [PATCH] Create unique partition labels
+
+When partitioning a device a name may be specified for each partition.
+Internally zfs doesn't use this partition name for anything so it
+has always just been set to "zfs".
+
+However this isn't optimal because udev will create symlinks using
+this name in /dev/disk/by-partlabel/.  If the name isn't unique
+then all the links cannot be created.
+
+Therefore a random 64-bit value has been added to the partition
+label, i.e "zfs-1234567890abcdef".  Additional information could
+be encoded here but since partitions may be reused that might
+result in confusion and it was decided against.
+
+Signed-off-by: Brian Behlendorf <behlendorf1@llnl.gov>
+Signed-off-by: Tony Hutter <hutter2@llnl.gov>
+Signed-off-by: Richard Laager <rlaager@wiktel.com>
+Closes #4517
+---
+ cmd/zpool/zpool_main.c   |  1 +
+ lib/libzfs/libzfs_pool.c | 28 +++++++++++++++++++++++++++-
+ 2 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/cmd/zpool/zpool_main.c b/cmd/zpool/zpool_main.c
+index 8f6916a..edc50cd 100644
+--- a/cmd/zpool/zpool_main.c
++++ b/cmd/zpool/zpool_main.c
+@@ -6038,6 +6038,7 @@ main(int argc, char **argv)
+ 
+ 	(void) setlocale(LC_ALL, "");
+ 	(void) textdomain(TEXT_DOMAIN);
++	srand(time(NULL));
+ 
+ 	dprintf_setup(&argc, argv);
+ 
+diff --git a/lib/libzfs/libzfs_pool.c b/lib/libzfs/libzfs_pool.c
+index 456015e..3eee43e 100644
+--- a/lib/libzfs/libzfs_pool.c
++++ b/lib/libzfs/libzfs_pool.c
+@@ -4143,6 +4143,32 @@ zpool_label_disk_check(char *path)
+ }
+ 
+ /*
++ * Generate a unique partition name for the ZFS member.  Partitions must
++ * have unique names to ensure udev will be able to create symlinks under
++ * /dev/disk/by-partlabel/ for all pool members.  The partition names are
++ * of the form <pool>-<unique-id>.
++ */
++static void
++zpool_label_name(char *label_name, int label_size)
++{
++	uint64_t id = 0;
++	int fd;
++
++	fd = open("/dev/urandom", O_RDONLY);
++	if (fd > 0) {
++		if (read(fd, &id, sizeof (id)) != sizeof (id))
++			id = 0;
++
++		close(fd);
++	}
++
++	if (id == 0)
++		id = (((uint64_t)rand()) << 32) | (uint64_t)rand();
++
++	snprintf(label_name, label_size, "zfs-%016llx", (u_longlong_t) id);
++}
++
++/*
+  * Label an individual disk.  The name provided is the short name,
+  * stripped of any leading /dev path.
+  */
+@@ -4232,7 +4258,7 @@ zpool_label_disk(libzfs_handle_t *hdl, zpool_handle_t *zhp, char *name)
+ 	 * can get, in the absence of V_OTHER.
+ 	 */
+ 	vtoc->efi_parts[0].p_tag = V_USR;
+-	(void) strcpy(vtoc->efi_parts[0].p_name, "zfs");
++	zpool_label_name(vtoc->efi_parts[0].p_name, EFI_PART_NAME_LEN);
+ 
+ 	vtoc->efi_parts[8].p_start = slice_size + start_block;
+ 	vtoc->efi_parts[8].p_size = resv;
+-- 
+2.7.4
+
