@@ -1,3 +1,9 @@
+zfs-linux (0.6.5.6-0ubuntu4) xenial; urgency=medium
+
+  * Drop mail-transport-agent to Suggests, and add default-mta preference.
+
+ -- Colin Ian King <colin.king@canonical.com>  Fri, 1 Apr 2016 19:18:11 +0100
+
 zfs-linux (0.6.5.6-0ubuntu3) xenial; urgency=medium
 
   * Add support 32 bit FS_IOC32_{GET|SET}FLAGS compat ioctls

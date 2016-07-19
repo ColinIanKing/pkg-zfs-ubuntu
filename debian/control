@@ -168,7 +168,7 @@ Package: zfs-zed
 Section: admin
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, zfsutils-linux
-Recommends: mail-transport-agent
+Suggests: default-mta | mail-transport-agent
 Replaces: zfsutils-linux
 Description: OpenZFS Event Daemon (zed)
  A monitor that automatically runs scripts for OpenZFS kernel events,
