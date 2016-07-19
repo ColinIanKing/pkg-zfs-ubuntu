@@ -1,0 +1,35 @@
+From 4b08673072bd5c6c3b429d1ba9aec181af3452b6 Mon Sep 17 00:00:00 2001
+From: Dimitri John Ledkov <xnox@ubuntu.com>
+Date: Wed, 16 Mar 2016 23:33:18 +0000
+Subject: [PATCH] Define _SUNOS_VTOC_16 for s390[x].
+
+Signed-off-by: Dimitri John Ledkov <xnox@ubuntu.com>
+---
+ lib/libspl/include/sys/isa_defs.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+Index: zfs-linux-0.6.5.4/lib/libspl/include/sys/isa_defs.h
+===================================================================
+--- zfs-linux-0.6.5.4.orig/lib/libspl/include/sys/isa_defs.h
++++ zfs-linux-0.6.5.4/lib/libspl/include/sys/isa_defs.h
+@@ -170,6 +170,7 @@ extern "C" {
+ #endif
+ 
+ #define	_BIG_ENDIAN
++#define	_SUNOS_VTOC_16
+ 
+ #else /* Currently x86_64, i386, arm, powerpc, s390, and sparc are supported */
+ #error "Unsupported ISA type"
+Index: zfs-linux-0.6.5.4/lib/libefi/rdwr_efi.c
+===================================================================
+--- zfs-linux-0.6.5.4.orig/lib/libefi/rdwr_efi.c
++++ zfs-linux-0.6.5.4/lib/libefi/rdwr_efi.c
+@@ -88,7 +88,7 @@ struct dk_map2  default_vtoc_map[NDKMAP]
+ #if defined(_SUNOS_VTOC_16)
+ 
+ #if defined(i386) || defined(__amd64) || defined(__arm) || \
+-    defined(__powerpc) || defined(__sparc)
++  defined(__powerpc) || defined(__sparc) || defined(__s390__)
+ 	{	V_BOOT,		V_UNMNT	},		/* i - 8 */
+ 	{	V_ALTSCTR,	0	},		/* j - 9 */
+ 

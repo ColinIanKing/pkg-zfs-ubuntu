@@ -1,3 +1,11 @@
+zfs-linux (0.6.5.4-0ubuntu6) xenial; urgency=medium
+
+  * cherry-pick 8e85373c1ded7866ae168dde3bd640769c093172 from
+    https://github.com/zfsonlinux/zfs/pull/4425.
+  * Set architecture to any.
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Wed, 16 Mar 2016 23:09:55 +0000
+
 zfs-linux (0.6.5.4-0ubuntu5) xenial; urgency=medium
 
   * cherry-picked c352ec27d5c5ecea8f6af066258dfd106085eaac ('Illumos 6370 -
