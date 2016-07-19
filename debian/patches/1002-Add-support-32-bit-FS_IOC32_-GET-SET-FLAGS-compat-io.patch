@@ -1,0 +1,51 @@
+From cff6678a6612e2ed7b144953782b88d8714725a4 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 30 Mar 2016 23:00:23 +0100
+Subject: [PATCH] Add support 32 bit FS_IOC32_{GET|SET}FLAGS compat ioctls
+
+We need 32 bit userspace FS_IOC32_GETFLAGS and FS_IOC32_SETFLAGS
+compat ioctls for systems such as powerpc64.  We use the normal
+compat ioctl idiom as used by a variety of file systems to provide
+this support.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ module/zfs/zpl_file.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/module/zfs/zpl_file.c b/module/zfs/zpl_file.c
+index a23bc7d..5c430c7 100644
+--- a/module/zfs/zpl_file.c
++++ b/module/zfs/zpl_file.c
+@@ -24,6 +24,9 @@
+  */
+ 
+ 
++#ifdef CONFIG_COMPAT
++#include <linux/compat.h>
++#endif
+ #include <sys/dmu_objset.h>
+ #include <sys/zfs_vfsops.h>
+ #include <sys/zfs_vnops.h>
+@@ -798,7 +801,17 @@ zpl_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ static long
+ zpl_compat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+-	return (zpl_ioctl(filp, cmd, arg));
++	switch (cmd) {
++	case FS_IOC32_GETFLAGS:
++		cmd = FS_IOC_GETFLAGS;
++		break;
++	case FS_IOC32_SETFLAGS:
++		cmd = FS_IOC_SETFLAGS;
++		break;
++	default:
++		return (-ENOTTY);
++	}
++	return (zpl_ioctl(filp, cmd, (unsigned long)compat_ptr(arg)));
+ }
+ #endif /* CONFIG_COMPAT */
+ 
+-- 
+2.7.4
+

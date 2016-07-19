@@ -3,8 +3,6 @@
 0002-Check-for-META-and-DCH-consistency-in-autoconf.patch
 0003-Add-libuutil-to-LIBADD-for-libzfs-and-libzfs_core.patch
 1000-ppc64el-endian-support.patch
-1001-shift-param.h-include-order-to-avoid-header-loop-on-arm64.patch
+1001-Fix-aarch64-compilation.patch
+1002-Add-support-32-bit-FS_IOC32_-GET-SET-FLAGS-compat-io.patch
 enable-zed.patch
-Illumos-6370---ZFS-send-fails-to-transmit-some-holes.patch
-8e85373c1ded7866ae168dde3bd640769c093172.patch
-0001-Define-_SUNOS_VTOC_16-for-s390-x.patch

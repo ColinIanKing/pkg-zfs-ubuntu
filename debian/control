@@ -15,8 +15,10 @@ Build-Depends: autotools-dev,
  libtool,
  uuid-dev,
  zlib1g-dev,
+ libblkid-dev,
+ libattr1-dev
 Standards-Version: 3.9.6
-Homepage: https://github.com/zfsonlinux/zfs/releases/tag/zfs-0.6.5.4
+Homepage: https://github.com/zfsonlinux/zfs/releases/tag/zfs-0.6.5.6
 
 Package: libnvpair1linux
 Section: libs

@@ -1,3 +1,40 @@
+zfs-linux (0.6.5.6-0ubuntu3) xenial; urgency=medium
+
+  * Add support 32 bit FS_IOC32_{GET|SET}FLAGS compat ioctls
+
+ -- Colin Ian King <colin.king@canonical.com>  Wed, 30 Mar 2016 23:08:24 +0000
+
+zfs-linux (0.6.5.6-0ubuntu2) xenial; urgency=medium
+
+  * Fix aarch64 compilation, missing hrtime_t and timestruc_t types
+
+ -- Colin Ian King <colin.king@canonical.com>  Sat, 26 Mar 2016 10:30:41 +0000
+
+zfs-linux (0.6.5.6-0ubuntu1) xenial; urgency=medium
+
+  [ Colin Ian King ]
+  * Sync with upstream 0.6.5.6 release
+    Remove scripts/zfault.sh from debian/zfs-doc.examples (no longer exists)
+    Add libblkid-dev, libattr1-dev build dependencies
+
+  [ Richard Laager ]
+  * Scrub all healthy pools monthly (LP: #1548009)
+
+ -- Colin Ian King <colin.king@canonical.com>  Wed, 23 Mar 2016 23:59:33 +0000
+
+zfs-linux (0.6.5.5-0ubuntu1) xenial; urgency=medium
+
+  [ Colin Ian King ]
+  * Sync with upstream 0.6.5.5 release
+
+  [ Chad Miller ]
+  * Update /lib/udev/rules.d/60-zfs.rules to create symlinks for GRUB
+    (LP: #1530953) for cases when the parition type ID is not a "Solaris ZFS"
+    /"Apple ZFS" type. Peek at the asserted partition contents, not just the
+    container state.
+
+ -- Colin Ian King <colin.king@canonical.com>  Mon, 21 Mar 2016 10:27:11 +0000
+
 zfs-linux (0.6.5.4-0ubuntu6) xenial; urgency=medium
 
   * cherry-pick 8e85373c1ded7866ae168dde3bd640769c093172 from

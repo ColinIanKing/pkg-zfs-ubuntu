@@ -64,7 +64,8 @@ override_dh_fixperms:
 	dh_fixperms
 
 	@# Prevent execute bits from being stripped by the Launchpad pbuilder.
-	$(CHMOD) a+x '$(CURDIR)'/debian/zfsutils-linux/usr/share/initramfs-tools/hooks/*
+	$(CHMOD) a+x '$(CURDIR)'/debian/zfsutils-linux/usr/share/initramfs-tools/hooks/* \
+		'$(CURDIR)'/debian/zfsutils-linux/usr/lib/zfs-linux/scrub
 	if [ -d '$(CURDIR)'/debian/zfs-initramfs/usr/share/initramfs-tools/hooks ]; then \
 		$(CHMOD) a+x '$(CURDIR)'/debian/zfs-initramfs/usr/share/initramfs-tools/hooks/*; \
 	fi

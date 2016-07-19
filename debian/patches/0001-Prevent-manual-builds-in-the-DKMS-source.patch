@@ -1,7 +1,7 @@
-Index: zfs-linux-0.6.5.3/config/dkms.m4
+Index: zfs-linux-0.6.5.6/config/dkms.m4
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ zfs-linux-0.6.5.3/config/dkms.m4	2015-10-27 14:31:25.572597153 -0600
+--- /dev/null
++++ zfs-linux-0.6.5.6/config/dkms.m4
 @@ -0,0 +1,14 @@
 +dnl #
 +dnl # Prevent manual building in DKMS source tree.
@@ -17,11 +17,11 @@ Index: zfs-linux-0.6.5.3/config/dkms.m4
 +		AC_MSG_RESULT([not found])
 +        ])
 +])
-Index: zfs-linux-0.6.5.3/config/user.m4
+Index: zfs-linux-0.6.5.6/config/user.m4
 ===================================================================
---- zfs-linux-0.6.5.3.orig/config/user.m4	2015-10-27 14:30:49.632596263 -0600
-+++ zfs-linux-0.6.5.3/config/user.m4	2015-10-27 14:31:25.572597153 -0600
-@@ -2,6 +2,7 @@
+--- zfs-linux-0.6.5.6.orig/config/user.m4
++++ zfs-linux-0.6.5.6/config/user.m4
+@@ -2,6 +2,7 @@ dnl #
  dnl # Default ZFS user configuration
  dnl #
  AC_DEFUN([ZFS_AC_CONFIG_USER], [
@@ -29,21 +29,17 @@ Index: zfs-linux-0.6.5.3/config/user.m4
  	ZFS_AC_CONFIG_USER_MOUNT_HELPER
  	ZFS_AC_CONFIG_USER_UDEV
  	ZFS_AC_CONFIG_USER_SYSTEMD
-Index: zfs-linux-0.6.5.3/config/zfs-build.m4
+Index: zfs-linux-0.6.5.6/config/zfs-build.m4
 ===================================================================
---- zfs-linux-0.6.5.3.orig/config/zfs-build.m4	2015-10-27 14:30:49.632596263 -0600
-+++ zfs-linux-0.6.5.3/config/zfs-build.m4	2015-10-27 14:31:25.572597153 -0600
-@@ -87,10 +87,10 @@
+--- zfs-linux-0.6.5.6.orig/config/zfs-build.m4
++++ zfs-linux-0.6.5.6/config/zfs-build.m4
+@@ -87,8 +87,8 @@ AC_DEFUN([ZFS_AC_CONFIG], [
  	ZFS_AC_CONFIG_ALWAYS
  
  	case "$ZFS_CONFIG" in
 -		kernel) ZFS_AC_CONFIG_KERNEL ;;
  		user)	ZFS_AC_CONFIG_USER   ;;
--		all)    ZFS_AC_CONFIG_KERNEL
--			ZFS_AC_CONFIG_USER   ;;
 +		kernel) ZFS_AC_CONFIG_KERNEL ;;
-+		all)    ZFS_AC_CONFIG_USER
-+			ZFS_AC_CONFIG_KERNEL ;;
+ 		all)    ZFS_AC_CONFIG_KERNEL
+ 			ZFS_AC_CONFIG_USER   ;;
  		srpm)                        ;;
- 		*)
- 		AC_MSG_RESULT([Error!])
