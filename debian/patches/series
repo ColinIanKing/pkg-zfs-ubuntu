@@ -5,3 +5,4 @@
 1000-ppc64el-endian-support.patch
 1001-shift-param.h-include-order-to-avoid-header-loop-on-arm64.patch
 enable-zed.patch
+Illumos-6370---ZFS-send-fails-to-transmit-some-holes.patch
